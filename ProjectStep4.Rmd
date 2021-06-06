@@ -1,5 +1,5 @@
 ---
-title: "[CSCI 2701]: Project Stage 4"
+title: "[CSCI 2701]: Project Step 4"
 author: "Elmurad Abbasov"
 date: "Spring 2021"
 output: 
@@ -17,7 +17,7 @@ output:
 </ul>
 
 <div id="stage-one" class=section level2"> </div>
-<h2> Stage four </h2>
+<h2> Stage Four </h2>
 
 <div id="reminder-of-the-project" class="section level3">
 <h3>Reminder of the project</h3>
