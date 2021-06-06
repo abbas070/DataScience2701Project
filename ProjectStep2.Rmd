@@ -1,0 +1,285 @@
+---
+title: "Stat 2701 Project Step 2"
+author: "Elmurad Abbasov"
+date: "Spring 2021"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<a href=#"stage-one">Stage Two</a>
+<ul>
+<li> <a href="#reminder-of-purpose">Reminder of purpose</a> </li>
+<li> <a href="#data-description">Data description</a> </li>
+<li> <a href="#data-overview">Data overview</a> </li>
+<li> <a href="#summaries">Summaries</a> </li>
+<li> <a href="#sanity">Sanity check</a> </li>
+<li> <a href="#observation">Initial observations</a> </li>
+<li> <a href="#future">Future work</a> </li>
+<li> <a href="#appendix">Appendix</a> </li>
+
+</ul>
+
+<div id="stage-one" class=section level2">
+<h2> Stage Two </h2>
+<p><strong>Warning:</strong> I have divided the modified dataset with ~1 million variables into two nearly even datasets to be able to upload them on GitHub. Thus, some of the statistical summaries might not match with the statements in this report. These inconsistencies will not affect results in Stage Three and Four.  Please email me at abbas070@umn.edu if you would like the original HTML webpage of this stage with correct summaries. </p>
+<div id="reminder-of-purpose" class="section level3">
+<h3>Reminder of purpose</h3>
+<p>Using a vast dataset from the Office of Foreign Labor Certification, I will conduct a detailed study of the H-1B visa work market for this project (OFLC). In this analysis, I will be looking specifically for H1B employees in the United States, and as a result will conclude on which part of the United States offers the most jobs for H-1B qualified specialists, and whether there was an increase or decrease of such job offering through 2015-2016. </P>
+
+<p> 1. <strong>What are the variables called?</strong> There are 10 columns in the dataset: case_status, employer_name, soc_name, job_title, full_time_position, prevailing_wage, year, worksite, lon(longitude of workcite), lat(latitute of workcite) </p>
+<p> 2. <strong>What do they mean?</strong>
+<p><strong>X1:</strong> which is the just the count of the rows;</p> 
+<P><strong>CASE_STATUS:</strong> Status associated with the last significant event or decision, Valid values include “Certified,” “Certified-Withdrawn,” Denied,” and “Withdrawn”;</P>
+<p><strong>EMPLOYER_NAME:</strong> Name of employer submitting the H1-B application, used in comparing salaries and number of applications of various employers;</P>
+<p><strong>JOB_TITLE:</strong> Title of the job using which we can filter specific job positions for e.g., Data Scientist, Data Engineer etc;</P>
+<p><strong>SOC_NAME:</strong> The occupation code for the employment;</P>
+<p><strong>FULL_TIME_POSITION:</strong> Whether the application is for a full-time position of for a part-time position;</p>
+<p><strong>PREVAILING_WAGE:</strong> The prevailing wage for a job position is defined as the average wage paid to similarly employed workers in the requested occupation in the area of intended employment; 
+<P><strong>YEAR:</strong> The application year;</P>
+<p><strong>WORKSITE_CITY/WORKSITE_STATE:</strong> The foreign worker’s intended area of employment;</p>
+<p><strong>lon:</strong> Longitude of the employer worksite;</p>
+<p><strong>lat:</strong> Latitude of the employer worksite</p>
+<p><strong>STATE:</strong> Names of states in the United States</p>
+</p>
+<div id="data-description" class="section level3">
+<h3>Data description</h3>
+<div style="overflow-x: scroll;">
+```{r, echo=F, message=FALSE, warning=FALSE}
+library(knitr)
+library(kableExtra)
+library(dplyr)
+library(ggplot2)
+library(data.table)
+
+data1 <- read.csv("h1b_part1.csv")
+data2 <- read.csv("h1b_part2.csv")
+df <- full_join(data1, data2)
+#df <- right_join(data1, data2)
+
+head(df,10) %>%
+ kable( "html", escape=F, align="c") %>%
+ kable_styling(bootstrap_options = "striped", full_width = F, position = "center", fixed_thead = T)
+```
+</div>
+<div id="data-overview" class="section level3">
+<h3>Data overview</h3>
+<p><strong>There were a couple transformations performed since last stage in preparation for future steps.</strong> First, I have trimmed the data to 2015 and 2016 years only to keep only the most relevant information available. Second, I have added a new column to the dataset - STATES - which serve as state names, in accordance with WORKCITY. Becuase a WORKCITE column contains both state names and city names, it would be problematic to perform data visualization on coropleth leaflet map, since it only takes states names. Because I am planning on making a leaflet map, I had to derive state names from the WORKCITE column and make a separate column for that. Due to the size of the data, I decided to perform the data transformation directly in Excel, and then uploaded an updated file into R using Upload button. <p>In addition, I have set to myself to make two coropleth maps - one about density of applicants per state, and the other one about the average wage per state. <p>Due to the size of data, to count applicants from each state and find average of wages per state, I decided to perform these manipulations in Excel and created two  new sub-tables called “AppCount” and "AvgWage". When I extracted states names from the WORKCITE column, I realized that each state is now attached to each row, with its own values. This gave me good grounds to use a COUNTIF function to count the overlapping states and thus found how many times each state repeats. I have then transformed this numeric values into another column called ApplicationCount and imported a new dataset - with States and ApplicationCount columns - into R, using Upload button. For finding an average of wages per state, I used AVERAGEIF function in Excel. Since STATE column was in the same order as PREVAILING_WAGE, I connected them both and derived an average (excluding 0s and NAs). Since the tables were already in .csv format, it didn’t cause any issues.</p></p>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Numeric summaries</strong></p>
+<p>The data has 997,411 records with 12 columns (variables) each:</P>
+```{r}
+c(nrow(df),ncol(df))
+```
+<p>The following variables have NAs: JOB_TITLE, FULL_TIME_POSITION, lon, lat, EMPLOYER_NAME, PREVAILING_WAGE, SOC_NAME</P>
+```{r}
+sapply(df,function(c){any(is.na(c))})
+```
+
+
+<p>There are 54736 NA entries in the entire dataset. A breakdown of NAs in individual columns will be shown below.</P>
+
+```{r}
+sum(is.na(df))
+```
+
+<div id="summaries" class="section level3 tabset"> 
+<h3>Summaries</h3>
+</div>
+<p><strong>CASE_STATUS</strong> <p>Numeric summary</p></p>
+```{r}
+summary(df$CASE_STATUS)
+
+table(df$CASE_STATUS)[1:10]
+
+length(unique(df$CASE_STATUS))
+```
+<p>Graphical summary</p>
+```{r,warning=F,message=F,fig.align='center'}
+caseSum <- df %>% filter(!is.na(CASE_STATUS)) %>% group_by(CASE_STATUS) %>% summarise(loc = length(lat))
+ggplot(data = caseSum, aes(x = reorder(CASE_STATUS,loc), y = loc/1000)) +  geom_bar(stat="identity",fill="lightblue", fill="grey") + coord_flip() +
+labs(title="Graphical summary of CASE_STATUS", x ="Case status", y = "Number of applications in thousands")
+```
+
+
+<p><strong>EMPLOYER_NAME</strong> <p>Numeric summary</p></p>
+
+```{r}
+summary(df$EMPLOYER_NAME)
+
+table(df$EMPLOYER_NAME)[1:10]
+
+length(unique(df$EMPLOYER_NAME))
+```
+
+<p>Graphical summary</p>
+<p>We can see from the graph top 20 employers hiring H1-B workers in 2015 and 2016, 3 of which are Infosys Limited, Tata consultancy services limited, and Wipro limited.</p>
+```{r,warning=F,message=F,fig.align='center'}
+EmployerData <-
+  df %>% group_by(EMPLOYER_NAME) %>% summarise(loc = length(lat)) %>% top_n(n = 20) %>% ungroup()
+ggplot(data = EmployerData, aes(x = reorder(EMPLOYER_NAME, loc), y = loc / 1000)) + geom_bar(stat = "identity",fill="lightblue") + coord_flip() +
+  labs(title = "", x = "Top 20 employers", y = "Applicants in thousands")
+```
+
+
+<p><strong>SOC_NAME</strong> <p>Numeric summary</p></p>
+
+```{r}
+summary(df$SOC_NAME)
+
+table(df$SOC_NAME)[1:10]
+
+length(unique(df$SOC_NAME))
+```
+
+<P>There is no graphical summary since SOC_NAME serves just as an occupational code, and doesn't mean to carry any insightful meaning</p>
+
+<p><strong>JOB_TITLE</strong> <p>Numeric summary</p></p>
+
+```{r}
+summary(df$JOB_TITLE)
+
+table(df$JOB_TITLE)[1:10]
+
+length(unique(df$JOB_TITLE))
+```
+
+<p>Graphical summary</p>
+<p>As we can see from the graph, one of the most popular job titles from 2015-2016 are Programmer Analyst, Software Engineer, Software Developer, Computer Programmer, and more.</p>
+```{r,warning=F,message=F,fig.align='center'}
+title_jobs <- df %>% group_by(JOB_TITLE) %>% summarise(loc = length(lat)) %>% 
+  top_n(n=20) %>% arrange(loc) %>% ungroup() 
+
+ggplot(data = title_jobs, aes(x = reorder(JOB_TITLE,loc), y = loc)) +  
+  geom_bar(stat="identity",fill="lightblue") +
+  coord_flip()  +
+  labs(title="", x ="Top 20 job title among H-1b workers", y = "Number of applications")
+```
+
+<p><strong>FULL_TIME_POSITION</strong> <p>Numeric summary</p></p>
+
+```{r}
+summary(df$FULL_TIME_POSITION)
+
+table(df$FULL_TIME_POSITION)[1:10]
+
+length(unique(df$FULL_TIME_POSITION))
+```
+
+<p>Graphical summary</p>
+<p>From this graph, we can see that more than 60% of applicants are employed full-time, and around 33% are part-time workers.</p>
+```{r,warning=F,message=F,fig.align='center'}
+ggplot(data = subset(df, !is.na(df$FULL_TIME_POSITION)),
+        aes(y = (..count..)*100/1048575, x = FULL_TIME_POSITION, fill = FULL_TIME_POSITION)) +
+        geom_bar(fill="lightblue") +
+        labs(x= "Full time position (yes/no?)", y = "Petitions made in percentage") +
+        theme(legend.position = "none") +
+        scale_y_continuous(breaks = seq(0,100,10))
+```
+<p><strong>PREVAILING_WAGE</strong> <p>Numeric summary</p></p>
+
+```{r}
+summary(df$PREVAILING_WAGE)
+
+table(df$PREVAILING_WAGE)[1:10]
+
+```
+
+<p>Graphical summary</p>
+<p>The following graph illustrates that an average salary in both 2015 and 2016 is more than $60k, and that it there is a slight raise in 2016.</p>
+```{r,message=F,warning=F,fig.align='center'}
+wages <- df %>% filter(!is.na(PREVAILING_WAGE)) %>% filter(PREVAILING_WAGE>0) %>% filter(!is.na(YEAR)) %>% 
+  group_by(YEAR) %>% summarise(avg = mean(PREVAILING_WAGE)) 
+
+ggplot(data = wages, aes(x = YEAR, y = avg)) +  
+  geom_bar(stat="identity",fill="lightblue") +
+  labs(title="", x ="Year", y = "Average salary", main="Prevailing wages in 2015 and 2016")
+```
+
+<p><strongYEAR</strong> <p>Numeric summary</p></p>
+
+```{r}
+summary(df$YEAR)
+
+table(df$YEAR)[1:10]
+```
+
+<p>Graphical summary</p>
+<p>From here we can see that there was an increase of about 200,000 total H-1B applicants from 2015 to 2016</p>
+```{r,message=F,warning=F,fig.align='center'}
+years <- df %>% filter(!is.na(YEAR)) %>% group_by(YEAR) %>% summarise(loc = length(lat))
+
+ggplot(data = years, aes(x = reorder(YEAR,loc), y = loc/1000)) + geom_bar(stat="identity", fill="lightblue") +
+  labs(title="A graph representing the difference of applicants of 2015 and 2016 years", x ="Year", y = "Number of applications  in thousands")
+```
+
+<p><strong>WORKCITE</strong> <p>Numeric summary</p></p>
+
+```{r}
+summary(df$WORKSITE)
+
+table(df$WORKSITE)[1:10]
+```
+
+<p>Graphical summary</p>
+<p>I will be presenting a coropleth leaflet map on density of applicants by state in the next stage. </p>
+
+
+<p><strong>STATE</strong> <p>Numeric summary</p></p>
+<p>I will present geographical data using leaflet package in later stages.</p>
+
+```{r}
+length(table(df$STATE))
+```
+
+
+
+<div id="sanity" class="section level3">
+<h3>Sanity checks</h3>
+
+
+<p>A sanity check can be done on the years, to check that only entries from the years 2015 or 2016 are in the data set. Since those are the only years' data that this project will be working with.</p>
+
+```{r}
+unique(df$YEAR)
+```
+
+<p>We can perform a sanity check for the <strong>CASE_STATUS</strong> variable to be certain that only there are only expected values in the data frame.</p>
+```{r}
+unique(df$CASE_STATUS)
+```
+
+<p>A sanity check on the ID variable can be done to check that no two entries or rows have the same ID.</p>
+
+<p>A return of <strong>NULL</strong> is what we would want for this, because we do not want to see any ID that is in the variable more than once.</p>
+```{r}
+ names(table(df$X1))[table(df$X1) > 1]
+```
+
+<p>A sanity check on the <strong>FULL_TIME_POSITION</strong> variable can be done to check that there are no entries other than yes <strong>(Y)</strong>, no <strong>(N)</strong> , or <strong>NA</strong>. </P>
+```{r}
+unique(df$FULL_TIME_POSITION)
+```
+
+<p>A sanity check on the <strong>PREVAILING_WAGE</strong> variable can be done to make sure there are no negative values (not including <strong<NA's</strong> ) in the variable. This can be done by adding up all negative values in the variable, which should add up to 0, since no negative values are expected. </p>
+```{r}
+sum(na.omit(df$PREVAILING_WAGE) < 0)
+```
+
+<div id="observation" class="section level3">
+<h3>Initial observations</h3>
+<p>There are many correlations that I can think of on this dataset. The fist one is that location influences the wage H-1B workers are receiving, such as the highest wage would be coming on major states such as California or New York. I have also observed that most of the employers are usually technology companies, and most of the positions offered to H-1B workers are technically-oriented titles, such as Software Engineer. I would love to discuss this more in the final stage. </p>
+
+<p><strong> I don't see any major outliers in the data, because everything is within a reasonable scope. </strong><p>
+
+<div id="future" class="section level3">
+<h3>Future work</h3>
+<p>For the final stage, I would love to make a statistical report and discuss several correlations using graphs, as well as applying other techniques such as illustrating data on interactive maps, specifically with choropleth with leaflet package. In addition, I could utilize word cloud and text mining techniques for some illustrations.</p>
+
+<div id="appendix" class="section level3">
+<h3>Appendix</h3>
+<p> I have been often using <a href="http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html">this</a> tutorial when building graphs using library(ggplot) package. </p>
