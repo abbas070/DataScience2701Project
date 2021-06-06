@@ -1,0 +1,636 @@
+---
+title: "Project Step 4"
+author: "Elmurad Abbasov"
+date: "Spring 2021"
+output: 
+  html_document:
+#    code_folding: hide
+---
+
+<a href=#"final-project">Final project</a>
+<ul>
+<li> <a href="#reminder-of-the-project">Reminder of the project</a> </li>
+<li> <a href="#data-summaries">Data summaries</a> </li>
+<li> <a href="#data-generalization">Data generalization</a> </li>
+<li> <a href="#outcomes">Outcomes</a> </li>
+<li> <a href="#appendix">Appendix</a> </li>
+</ul>
+
+<div id="stage-one" class=section level2"> </div>
+<h2> Stage four </h2>
+
+<div id="reminder-of-the-project" class="section level3">
+<h3>Reminder of the project</h3>
+</div>
+
+<p><strong>Purpose:</strong> One of the most common questions students and professionals have in our modern world are usually related to job search. In this project, I wanted to make a comprehensive statistical analysis of the job market specifically for H-1B visa workers, mainly because this subject is not that popular but often underestimated. <p>The goal of the project was to find what employers are offering the most H-1B jobs in general and for specific roles such as for Data Scientists, what are the most popular occupations, as well as to find out what companies have the highest pay per year...... MORE ADD </p> <strong>Data:</strong> For that, I was using a massive collection of H-1B work visa petition data, with approximately 3 million records overall in the period from 2011 to 2016. The dataset was initially collected from the Office of Foreign Labor Certification (OFLC), but then modified to an appropriate for an analysis form by Sharan Naribole. I have trimmed the data to the range from 2015-2016 to keep only the most recent information present, as well as added a few extra datasets myself for additional analysis.</p>
+
+<p> An author mentions that several data wrangling techniques were performed, such as merging or separating columns. I went ahead I checked the original, raw dataset from U.S Department of Labor (performance data section) and compared the dataset from Kaggle and from raw data, and found that the dataset was in fact modified. To keep it short, the author removed many columns and kept only 11 that will be shown below for our analysis. <p>In addition, the author mentioned that for WAGE column in the data set, there were two salary measurments - hourly based, and annually based. In summary, 92% of records provided WAGE at the Year scale, where only 7.73% provided the information at Hourly scale, and there were also 0.02% of mission information. The author removed missing information and converted hourly scale to year scale.</p> <p>Furthermore, the author added two completely new columns to the dataset - lat (latitude) and lon (longitude) columns. Since they were not provided in the raw dataset from Office of Foreign Labor Certification (OFLC). To do that, the author used ggmap package. Geocodes have been found for 96.47% of the records in our dataset inspite of not finding the geocodes for every unique Worksite value.</p> <p><strong>Lastly,</strong> I have performed one additional trim of the dataset - removing WITHDRAWN and DENIED applicants from the CASE_STATUS section. Since we are interested in studying qualified candidates, I decided not to include this information in the dataset, so I have removed it using Excel.</p> </p> <p><strong>Motivation:</strong> Although the analysis is performed based on H-1B visa petitions dataset, I still truly believe that the majority of information presented at the end of the project will be suitable for any other people interested in the description of the job market, regardless of work authorization status, because the trends are often common and general across all people.</p><p> I will get into a little bit more details about the data and its variables to refresh our memory below. </p>
+
+<p><strong>X1(ID):</strong> which is the just the count of the rows;</p> 
+<P><strong>CASE_STATUS:</strong> Status associated with the last significant event or decision, Valid values include “Certified,” “Certified-Withdrawn,” Denied,” and “Withdrawn”;</P>
+<p><strong>EMPLOYER_NAME:</strong> Name of employer submitting the H1-B application, used in comparing salaries and number of applications of various employers;</P>
+<p><strong>JOB_TITLE:</strong> Title of the job using which we can filter specific job positions for e.g., Data Scientist, Data Engineer etc;</P>
+<p><strong>SOC_NAME:</strong> The occupation code for the employment;</P>
+<p><strong>FULL_TIME_POSITION:</strong> Whether the application is for a full-time position of for a part-time position;</p>
+<p><strong>PREVAILING_WAGE:</strong> The prevailing wage for a job position is defined as the average wage paid to similarly employed workers in the requested occupation in the area of intended employment; 
+<P><strong>YEAR:</strong> The application year;</P>
+<p><strong>WORKSITE_CITY/WORKSITE_STATE:</strong> The foreign worker’s intended area of employment;</p>
+<p><strong>lon:</strong> Longitude of the employer worksite;</p>
+<p><strong>lat:</strong> Latitude of the employer worksite</p>
+<p><strong>STATE</strong> STATE: Names of states in the United States </p>
+</p>
+
+<div style="overflow-x: scroll;">
+
+```{r,warning=FALSE, message=FALSE}
+suppressWarnings({ library(knitr) })
+suppressWarnings({ library(kableExtra) })
+suppressWarnings({ library(dplyr) })
+
+df <- read.csv("h1bcopy.csv")
+head(df,10) %>%
+ kable( "html", escape=F, align="c") %>%
+ kable_styling(bootstrap_options = "striped", full_width = T, position = "center", fixed_thead = T)
+```
+</div>
+
+<p>The variables are of the following types: CASE_STATUS, EMPLOYER_NAME, JOB_TITLE, SOC_NAME, FULL_TIME_POSITION, WORKSITE_CITY/STATE, variables are in a form of characters or strings, but columns such as PREVAILING_WAGE, lon, and lat are numeric, with YEAR being integer. </P>
+
+```{r}
+glimpse(df)
+```
+
+<p>As for <strong>NAs</strong> , there are 54736 NAs in the entire dataset, but they can be excluded.</p>
+
+```{r}
+sum(is.na(df))
+```
+
+<p> <strong>Are there any coding issues?</strong> There are no coding issues– all categorical levels correspond to what one would expect from their value. There are a few NAs but I have excluded them manually.</p>
+
+<p> <strong>How much data is there?</strong> Initial dataframe from Kaggle has 11 columns and 3002458 observations. I have trimmed the dataset for only 2015 and 2016 years, and thus it became only 997411 observations with 12 variables (after adding an extra column). </p>
+
+```{r}
+c(nrow(df),ncol(df))
+```
+
+
+<p> <strong>Where did you get the data? </strong> I have downloaded this dataset from Kaggle.com. An author of the dataset, Sharan Naribole, did some data wrangling to bring it to an appropriate for analysis form, because the original raw data was not that suitable. Please see an image below for an illustration on how to navigate on Kaggle. The source of the dataset from Kaggle can be found <a href="https://www.kaggle.com/nsharan/h-1b-visa">here</a>. </p>
+
+<p> <strong>What possible pitfalls exist?</strong> There are NAs present in several columns, mostly in lon and lat columns. They can be excluded, however. Another pitfall was that the author joined states and cities together in one column, which leaflet doesn't always accept. Because of this, I can to perform several manipulations in excel to create new columns and a few new datasets which included independent state names. 
+
+<p><strong>Data transformation</strong></p> <p>For additional details, I have added a new column to the dataset - STATES - which serve as state names, in accordance with WORKCITY. Becuase a WORKCITE column contains both state names and city names, it would be problematic to perform data visualization on coropleth leaflet map, since it only takes states names. Because I am planning on making a leaflet map, I had to derive state names from the WORKCITE column and make a separate column for that. Due to the size of the data, I decided to perform the data transformation directly in Excel, and then uploaded an updated file into R using Upload button.</p>  <p>Due to the size of data, to count applicants from each state and find average of wages per state, I decided to perform these manipulations in Excel and created two new sub-tables called “AppCount” and "AvgWage". When I extracted states names from the WORKCITE column, I realized that each state is now attached to each row, with its own values. This gave me good grounds to use a COUNTIF function to count the overlapping states and thus found how many times each state repeats. I have then transformed this numeric values into another column called ApplicationCount and imported a new dataset - with States and ApplicationCount columns - into R, using Upload button. For finding an average of wages per state, I used AVERAGEIF function in Excel. Since STATE column was in the same order as PREVAILING_WAGE, I connected them both and derived an average (excluding 0s and NAs). Since the tables were already in .csv format, it didn’t cause any issues. Please see the layout of these tables below:</p> </p>
+
+```{r, warning=FALSE, message=FALSE}
+library(knitr)
+library(kableExtra)
+dfCount <- read.csv("AppCount.csv")
+head(dfCount,10) %>%
+ kable( "html", escape=F, align="c") %>%
+ kable_styling(bootstrap_options = "striped", full_width = F, position = "center", fixed_thead = T)
+```
+
+```{r, warning=FALSE, message=FALSE}
+library(knitr)
+library(kableExtra)
+dfCount <- read.csv("AvgWage.csv")
+head(dfCount,10) %>%
+ kable( "html", escape=F, align="c") %>%
+ kable_styling(bootstrap_options = "striped", full_width = F, position = "center", fixed_thead = T)
+```
+
+<p> <strong>How to get the data into R?</strong> To get this dataset into R, one should first download it from <a href="https://www.kaggle.com/nsharan/h-1b-visa">Kaggle</a>, and then import it into R using an upload button that is displayed on the left panel. </P>
+
+<div id="data-summaries" class="section level3">
+<h3>A bit on data summaries</h3>
+</div>
+
+
+<p><strong>EMPLOYER_NAME</strong></P>
+<p>From this graph we can see that top three H-1B employers in 2015 and 2016 are Infosys limited, Tata consultancy services limited, and Wipro limited.</p>
+
+```{r,warning=F,message=F}
+library(ggplot2)
+EmployerData <-
+  df %>% group_by(EMPLOYER_NAME) %>% summarise(loc = length(lat)) %>% top_n(n = 20) %>% ungroup()
+ggplot(data = EmployerData, aes(x = reorder(EMPLOYER_NAME, loc), y = loc / 1000)) + geom_bar(stat = "identity",fill="lightblue") + coord_flip() +
+  labs(title = "", x = "Top 20 employers", y = "Applicants in thousands")
+```
+
+<p><strong>JOB_TITLE</strong></P>
+<p>Another important illustration to point at is that the most popular job titles among H-1B applicants are Programmer Analysts, Software Engineers, and Software Developers.</p>
+
+```{r,warning=F,message=F,fig.align='center'}
+title_jobs <- df %>% group_by(JOB_TITLE) %>% summarise(loc = length(lat)) %>% 
+  top_n(n=20) %>% arrange(loc) %>% ungroup() 
+
+ggplot(data = title_jobs, aes(x = reorder(JOB_TITLE,loc), y = loc)) +  
+  geom_bar(stat="identity",fill="lightblue") +
+  coord_flip()  +
+  labs(title="", x ="Top 20 job title among H-1b workers", y = "Number of applications")
+```
+
+
+
+
+
+<p><strong>FULL_TIME_POSITION</strong></P>
+<p>Last illustration that I would like to mention is that more than 60% of applicants are employed full-time, and around 33% are part-time workers.</p>
+
+```{r,warning=F,message=F,fig.align='center'}
+ggplot(data = subset(df, !is.na(df$FULL_TIME_POSITION)),
+        aes(y = (..count..)*100/1048575, x = FULL_TIME_POSITION, fill = FULL_TIME_POSITION)) +
+        geom_bar(fill="lightblue") +
+        labs(x= "Full time position (yes/no?)", y = "Petitions made in percentage") +
+        theme(legend.position = "none") +
+        scale_y_continuous(breaks = seq(0,100,10))
+```
+
+
+<div id="data-generalization" class="section level3"> 
+<h3>Data generalization</h3>
+
+</div>
+
+
+<p>To give a quick reminder, <strong>Leaflet</strong> is a JavaScript library made to illustrative graphical information on geographical maps, and with its help we have made our interactive map. Word Cloud is another package in R that allows us to visually illustrate out text mining work. We can use text mining techniques to highlight the most commonly used keywords in a paragraph of text, and wordcloud in a visual representation of our textual data. <p>For this project, one of my goals was to illustrate what is the most popular job occupation in years from 2015 and 2015, as well as cover what specific locations have the most applicants filing visa petitions (and thus offering more jobs) and what part of the country has the highest average pay per year.</p> </p>
+
+<p><strong>A few words on technical setup</strong></p>
+
+<p>For leaflet - choropleth, I have used a GeoJSON file to load the United States geographical data and to shape the United States using “polygons” geometry type. I have then loaded my AppCount.csv file attaching it to countApp dataframe, together with a .json file attaching it to “states.” Then, I have sorted States and ApplicationCountfrom the countApp dataframe and merged .json information with my States. Once we are done with the fundamentals of importing and connecting dependencies, we can move to another part of the code that is responsible for setting up the view of the map, such as to initialize the exact coordinates for the starter view, adjust color, etc. The last part of the code is responsible for labeling the map, and in our case, it is total job applications per state. Please refer to appendix for code base. The same concept applies to a second choropleth, but this time we load AvgWage.csv file attaching it to averageApp dataframe.</p>
+
+<p>For Word Clouds the setup was simple enough to cover in a few sentences - the goal was to find the most repetetive job title among all applicants, so I have imported the dataset into a dataframe called df, filtered for JOB_TITLE/EMPLOYER_NAME, set the frequency, and adjusted word cloud visual size.</p>
+
+<p><strong>Explanation choropleth one:</strong></p>
+<p>As a result, in this choropleth, we can now hover over the states and see the total number of applications filled in that specific state, for both 2015 and 2016. As it was expected, the most applications are filled in California (184,932) being the highest, then Texas (104,442), and then New York (86985). To summarize, if California had 184,932 applicants in total for those two years, it means that California offers the most jobs across the country, at least for H-1B workers.</p>
+
+<p>To provide an insight, I think an important factor to consider here, however, is that H-1B workers are usually offered a job when there is a deficiency of professionals who already reside in country, and that's why a company has to look for candidates around the world. Usually, the positions to which H-1B workers are applying are highly qualified and very competitive, and such jobs often come from the IT sector of the job market. As we know, California, at least for some time, has been known as the Mecca of technologies in the United States, as dozens of largest US based tech companies, including Google, Amazon, Facebook, and Microsoft, are based and have their headquarters in California, San Francisco, or how they call it - a Silicon Valley. We can back up this statement with a bonus example at the end. </p>
+```{r, warning=F, message=F, echo=F, fig.width=10}
+suppressWarnings({ library(geojsonio) })
+
+library(leaflet)
+library(sp)
+
+countApp <- read.csv("AppCount.csv", header = T)
+
+states = geojsonio::geojson_read("gz_2010_us_040_00_20m.json",what="sp")
+
+df_states = countApp$State
+
+count = countApp$ApplicationCount
+
+names(count) = df_states
+
+USS = states[states$NAME %in% df_states,]
+
+USS$Count = count[USS$NAME]
+
+map=leaflet(USS)
+bins = c(0, 500, 1000, 5000, 10000, 50000, 100000, 200000)
+pal=colorBin("YlOrRd",domain=USS$Count, bins = bins)
+
+map%>%setView(-96, 37.8, 4)%>%addPolygons(
+   color="white",
+   weight=2,
+   opacity=1,
+   dashArray="3",
+   fillOpacity=0.7,
+   fillColor=~pal(Count),
+   highlight=highlightOptions(
+     weight=5,
+     color="#666",
+     dashArray="",
+     fillOpacity= 0.7,
+     bringToFront=TRUE
+   ),
+   # From R leaflet tutorial
+   label=sprintf(
+      "<strong>%s</strong><br/>%g total applications per state</sup>",
+      USS$NAME,
+      USS$Count
+   ) %>% lapply(htmltools::HTML),
+   labelOptions=labelOptions(
+     style=list("font-weight" = "normal", 
+                padding="3px 8px"),
+     textsize="15px",
+     direction="auto"
+   ),
+) %>% addLegend(pal = pal, values = ~Count, opacity = 0.7, title = NULL,
+  position = "bottomleft")
+```
+
+<p><strong>Explanation choropleth two:</strong></p>
+<p>For this choropleth, if we hover over the states, we can see see the average wage per state, for both 2015 and 2016 combined.Unlike in the first example, large industrial states such as California and New York are not outstanding at all. In fact, Delaware happens to have the highest average wage, followed by Missouri. The lowest average wage was in Michigan at only about $60k per year. With this we can say that the average wage accross the country, in 2015 and 2016, was around 70K dollars. So what does it mean?</p>
+
+<p>If we take a look at <a href="https://www.ssa.gov/oact/cola/central.html">this statistical information</a> collected from Social Security Association, the average wage in the US for 2015 was only 46,119.78 thousand dollars, and for 2016 was 46,640.94 thousand dollars. One has to wonder, why the average wage in country in 2015-2016 was ~46k dollars, but the graph illustrates it at about 70k dollars. Wrong calculations? The key word here would be <strong>H1-B workers</strong>. As we mentioned before, H1-B workers are only hired where there is a direct deficiency of resident application. Usually, such positions are very competitive, and often come from IT sector of the job market. Thus, because work that H-1B applicants perform is often intellectually challenging, they have high salaries correspondingly. In our case, since we are working with H-1B visa petitions dataset, we are also taking an average of what H-1B workers were payed, and as it turned out, the average pay around the for H1-B workers in 2015 and 2016 is about the same 70k dollars, with rare changes. </p>
+
+```{r,warning=F, message=F, echo=F, fig.width=10}
+library(geojsonio)
+library(leaflet)
+library(sp)
+library(stringr)
+
+averageApp <- read.csv("AvgWage.csv", header = T)
+
+states1 = geojsonio::geojson_read("gz_2010_us_040_00_20m.json",what="sp")
+
+df_states = str_to_title(averageApp$State)
+
+
+
+average = averageApp$AverageWage
+
+names(average) = df_states
+
+USS = states1[states1$NAME %in% df_states,]
+
+USS$Average = average[USS$NAME] 
+
+map=leaflet(USS)
+bins = c(0, 62000, 65000, 70000, 72000, 75000, 77000, 80000, 83000, 85000, 90000, 95000)
+pal=colorBin("YlOrRd",domain=USS$Average, bins = bins)
+
+map%>%setView(-96, 37.8, 4)%>%addPolygons(
+   color="white",
+   weight=2,
+   opacity=1,
+   dashArray="3",
+   fillOpacity=0.7,
+   fillColor=~pal(Average),
+   highlight=highlightOptions(
+     weight=5,
+     color="#666",
+     dashArray="",
+     fillOpacity= 0.7,
+     bringToFront=TRUE
+   ),
+   # From R leaflet tutorial
+   label=sprintf(
+      "<strong>%s</strong><br/>%g average wage per state</sup>",
+      USS$NAME,
+      USS$Average
+   ) %>% lapply(htmltools::HTML),
+   labelOptions=labelOptions(
+     style=list("font-weight" = "normal", 
+                padding="3px 8px"),
+     textsize="15px",
+     direction="auto"
+   ),
+) %>% addLegend(pal = pal, values = ~Average, opacity = 0.7, title = NULL,
+  position = "bottomleft")
+```
+
+<p><strong>Explanation Word Cloud one:</strong></p>
+<p>For the </strong>Word Cloud</strong> we can see that the most repeating job title in 2015-2016 years is <strong>Programmer Analyst</strong>, followed by Software Engineer, Computer Programmer, Software Developer, Computer Systems Analyst, and more. We can also backup this Word Cloud by one of our previous graphs (JOB_TITLE) stated above, where we have identified that Programmer Analysts have more than 75 thousand of applications.</P>
+
+```{r, fig.align="center", fig.width = 10, fig.height=10, warning=FALSE, message=FALSE, echo=FALSE}
+suppressWarnings({ library(tm) })
+suppressWarnings({ library(wordcloud) })
+suppressWarnings({ library(tidyr) })
+suppressWarnings({ library(RColorBrewer)})
+suppressWarnings({ library(dplyr)})
+
+
+df <- read.csv("h1bcopy.csv")
+jobs_df = count(df, JOB_TITLE, sort = TRUE)
+wordcloud(words = jobs_df$JOB_TITLE, 
+          freq = jobs_df$n, 
+          min.freq = 500,
+          max.words=300, 
+          random.order=FALSE, 
+          rot.per=0.25, 
+          colors=brewer.pal(8, "Dark2"))  
+```
+
+<p><strong>Explanation Word Cloud two:</strong></p>
+<p>For this Word Cloud, we can say that an employer, or a company with the most frequency was <strong>Infosys limited</strong>, followed by Tata consultancy services limited, Wipro limited, and more. It means that H-1B workers filed petitions for those companies, and thus those companies could offer the most jobs for H-1B workers in general. This Word Cloud can also be backed up by one of our previous graphs stated above (EMPLOYER_NAME), where the results are identical. </p>
+
+```{r, fig.align="center", fig.width = 10, fig.height=10, warning=FALSE, message=FALSE, echo=FALSE}
+employer_df = count(df, EMPLOYER_NAME, sort = TRUE)
+
+wordcloud(words = employer_df$EMPLOYER_NAME, 
+          freq = jobs_df$n, 
+          min.freq = 100,
+          max.words=200, 
+          random.order=FALSE, 
+          rot.per=0.25, 
+          colors=brewer.pal(8, "Accent")) 
+```
+
+<P><strong>Extra plots: </strong></P>
+<p>Now when we are done with showing the main tools for this project - leaflet and wordcloud packages, I would like to perform a last finding and plot a ggplot graph to illustrate what cities and states in the US hire the most <strong>Data Scientists</strong> , as of 2015 and 2016. This will also backup our first choropleth. For this, we will use our WORKCITE column in our dataset.</p> 
+
+<P>After filtering specifically for Data Scientists, we can see from the graph below that San Francisco, California is the city/state that offers the most Data Science jobs in the country, followed by New York and Washington, as of 2015 and 2016 years. Our hypothesis from the first choropleth was confirmed that San Francisco is the city that hires many H1-B workers from the IT job market sector.</P>
+
+```{r, warning=F, message=F,fig.width=10,echo=F,fig.align='center'}
+
+param <-
+   subset(df, grepl("^DATA SCIENTIST*", toupper(df$JOB_TITLE)) == TRUE)
+
+dataf <- as.data.frame(param %>% group_by(YEAR))
+
+param$WORKSITE <- factor(param$WORKSITE)
+
+count <- param %>% group_by(WORKSITE) %>%
+   summarise(count = n()) %>%
+   arrange(desc(count)) %>%
+   top_n(20)
+
+ggplot(data = count, aes(
+   x = reorder(WORKSITE, count),
+   y = count,
+   fill = WORKSITE
+)) +
+   geom_bar(stat = "identity", fill = "orange") +
+   labs(x = "WORKCITE", y = "Number of Data Scientists",
+        title = "Top 20 US States with the most H-1B Data Science petitions") +
+   scale_y_continuous(breaks = seq(0, 1000, 1000)) +
+   coord_flip()
+```
+
+<p>Implying the same logic, we can find employers that offer the most Data Science jobs for H1-B workers. From the graph below we can see that Microsoft Corporation, followed by Facebook and Uber Technologies offer the most Data Science jobs for H-1B workers, as of 2015 and 2016 years.</p>
+
+```{r,warning=F, message=F, fig.width=10,echo=F,fig.align='center'}
+param <-
+   subset(df, grepl("^DATA SCIENTIST*", toupper(df$JOB_TITLE)) == TRUE)
+
+dataf <- as.data.frame(param %>% group_by(EMPLOYER_NAME))
+
+param$EMPLOYER_NAME <- factor(param$EMPLOYER_NAME)
+
+count <- param %>% group_by(EMPLOYER_NAME) %>%
+   summarise(count = n()) %>%
+   arrange(desc(count)) %>%
+   top_n(20)
+
+ggplot(data = count, aes(
+   x = reorder(EMPLOYER_NAME, count),
+   y = count,
+   fill = EMPLOYER_NAME
+)) +
+   geom_bar(stat = "identity", fill = "orange") +
+   labs(x = "Employers", y = "Number of Data Scientists",
+        title = "Top 20 companies with the most H-1B Data Science petitions") +
+   scale_y_continuous(breaks = seq(0, 1000, 1000)) +
+   coord_flip()
+```
+
+
+
+<div id="outcomes" class="section level3">
+<h3>Outcomes</h3>
+<p><strong>From the research above, we can conduct the following conclusions:</strong> 
+<p>Infosys limited, Tata consultancy services limited, and Wipro limited are top 3 most frequent employers for 2015-2016 H-1B workers.</P>
+<p>Programming analysts, software engineers/developers, and computer programmers are the most frequent job title for H-1B workers in 2015 and 2015.</p>
+<p>Most of the H-1B applicants worked full time in 2015 and 2016.</p>
+<p>California has the most H-1B applications in the country, followed by Texas and New York. Since there are more applicants, there is more job offers, so we can derive a statement that CA, TX, and NY states hired the most H-1B workers in 2015 and 2016.</p>
+<p>Average wage per state was more or less the same for all H-1B workers, with Delawere (93842.9) and Missouri (80236.1) had the highest average wage.</p>
+<p>San Francisco, CA, New York, New York, and Washington, Redmond, are top 3 locations hiring Data Scientists among H-1B workers for the 2015 and 2016 years.</p>
+<p> Microsoft Corporation, followed by Facebook and Uber Technologies offer the most Data Science jobs for H-1B workers, as of 2015 and 2016 years.</p></p>
+
+<div id="appendix" class="section level3">
+<h3>Appendix</h3>
+<p><strong>Appendix choropleth one</strong></p> 
+```{r, warning=F, message=F, eval=F, fig.width=10}
+suppressWarnings({
+   library(geojsonio)
+})
+
+library(leaflet)
+library(sp)
+
+countApp <- read.csv("AppCount.csv", header = T)
+
+states = geojsonio::geojson_read("gz_2010_us_040_00_20m.json", what = "sp")
+
+df_states = countApp$State
+
+count = countApp$ApplicationCount
+
+names(count) = df_states
+
+USS = states[states$NAME %in% df_states,]
+
+USS$Count = count[USS$NAME]
+
+map = leaflet(USS)
+bins = c(0, 500, 1000, 5000, 10000, 50000, 100000, 200000)
+pal = colorBin("YlOrRd", domain = USS$Count, bins = bins)
+
+map %>% setView(-96, 37.8, 4) %>% addPolygons(
+   color = "white",
+   weight = 2,
+   opacity = 1,
+   dashArray = "3",
+   fillOpacity = 0.7,
+   fillColor =  ~ pal(Count),
+   highlight = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE
+   ),
+   # From R leaflet tutorial
+   label = sprintf(
+      "<strong>%s</strong><br/>%g total applications per state</sup>",
+      USS$NAME,
+      USS$Count
+   ) %>% lapply(htmltools::HTML),
+   labelOptions = labelOptions(
+      style = list("font-weight" = "normal",
+                   padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto"
+   ),
+) %>% addLegend(
+   pal = pal,
+   values = ~ Count,
+   opacity = 0.7,
+   title = NULL,
+   position = "bottomleft"
+)
+```
+
+<p><strong>Appendix choropleth two</strong></p> 
+
+```{r,warning=F, message=F, eval=F, fig.width=10}
+library(geojsonio)
+library(leaflet)
+library(sp)
+library(stringr)
+
+averageApp <- read.csv("AvgWage.csv", header = T)
+
+states1 = geojsonio::geojson_read("gz_2010_us_040_00_20m.json", what = "sp")
+
+df_states = str_to_title(averageApp$State)
+
+
+
+average = averageApp$AverageWage
+
+names(average) = df_states
+
+USS = states1[states1$NAME %in% df_states, ]
+
+USS$Average = average[USS$NAME]
+
+map = leaflet(USS)
+bins = c(0,
+         62000,
+         65000,
+         70000,
+         72000,
+         75000,
+         77000,
+         80000,
+         83000,
+         85000,
+         90000,
+         95000)
+pal = colorBin("YlOrRd", domain = USS$Average, bins = bins)
+
+map %>% setView(-96, 37.8, 4) %>% addPolygons(
+   color = "white",
+   weight = 2,
+   opacity = 1,
+   dashArray = "3",
+   fillOpacity = 0.7,
+   fillColor =  ~ pal(Average),
+   highlight = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE
+   ),
+   # From R leaflet tutorial
+   label = sprintf(
+      "<strong>%s</strong><br/>%g average wage per state</sup>",
+      USS$NAME,
+      USS$Average
+   ) %>% lapply(htmltools::HTML),
+   labelOptions = labelOptions(
+      style = list("font-weight" = "normal",
+                   padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto"
+   ),
+) %>% addLegend(
+   pal = pal,
+   values = ~ Average,
+   opacity = 0.7,
+   title = NULL,
+   position = "bottomleft"
+)
+```
+
+<p><strong>Appendix wordcloud one</strong></p> 
+
+```{r, fig.align="center", fig.width = 10, fig.height=10, warning=FALSE, message=FALSE, eval=FALSE}
+suppressWarnings({
+   library(tm)
+})
+suppressWarnings({
+   library(wordcloud)
+})
+suppressWarnings({
+   library(tidyr)
+})
+suppressWarnings({
+   library(RColorBrewer)
+})
+suppressWarnings({
+   library(dplyr)
+})
+
+
+df <- read.csv("h1bcopy.csv")
+jobs_df = count(df, JOB_TITLE, sort = TRUE)
+wordcloud(
+   words = jobs_df$JOB_TITLE,
+   freq = jobs_df$n,
+   min.freq = 500,
+   max.words = 300,
+   random.order = FALSE,
+   rot.per = 0.25,
+   colors = brewer.pal(8, "Dark2")
+)  
+```
+
+<p><strong>Appendix wordcloud two</strong></p> 
+
+```{r, fig.align="center", fig.width = 10, fig.height=10, warning=FALSE, message=FALSE, eval=FALSE}
+employer_df = count(df, EMPLOYER_NAME, sort = TRUE)
+
+wordcloud(
+   words = employer_df$EMPLOYER_NAME,
+   freq = jobs_df$n,
+   min.freq = 100,
+   max.words = 200,
+   random.order = FALSE,
+   rot.per = 0.25,
+   colors = brewer.pal(8, "Accent")
+) 
+```
+
+<p><strong>Appendix extra plot one</strong></p> 
+```{r, warning=F, message=F,fig.width=10,eval=F}
+
+param <-
+   subset(df, grepl("^DATA SCIENTIST*", toupper(df$JOB_TITLE)) == TRUE)
+
+dataf <- as.data.frame(param %>% group_by(YEAR))
+
+param$WORKSITE <- factor(param$WORKSITE)
+
+count <- param %>% group_by(WORKSITE) %>%
+   summarise(count = n()) %>%
+   arrange(desc(count)) %>%
+   top_n(20)
+
+ggplot(data = count, aes(
+   x = reorder(WORKSITE, count),
+   y = count,
+   fill = WORKSITE
+)) +
+   geom_bar(stat = "identity", fill = "orange") +
+   labs(x = "WORKCITE", y = "Number of Data Scientists",
+        title = "Top 20 US States with the most H-1B Data Science petitions") +
+   scale_y_continuous(breaks = seq(0, 1000, 1000)) +
+   coord_flip()
+```
+
+<p><strong>Appendix extra plot two</strong></p> 
+
+```{r,warning=F, message=F, fig.width=10,eval=F}
+param <-
+   subset(df, grepl("^DATA SCIENTIST*", toupper(df$JOB_TITLE)) == TRUE)
+
+dataf <- as.data.frame(param %>% group_by(EMPLOYER_NAME))
+
+param$EMPLOYER_NAME <- factor(param$EMPLOYER_NAME)
+
+count <- param %>% group_by(EMPLOYER_NAME) %>%
+   summarise(count = n()) %>%
+   arrange(desc(count)) %>%
+   top_n(20)
+
+ggplot(data = count, aes(
+   x = reorder(EMPLOYER_NAME, count),
+   y = count,
+   fill = EMPLOYER_NAME
+)) +
+   geom_bar(stat = "identity", fill = "orange") +
+   labs(x = "Employers", y = "Number of Data Scientists",
+        title = "Top 20 companies with the most H-1B Data Science petitions") +
+   scale_y_continuous(breaks = seq(0, 1000, 1000)) +
+   coord_flip()
+```
+
+<p><strong>Additional resources</strong></p>
+<p><a href="http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html">This tutorial on ggplot2 package has been useful</a><p>
+<p><a href="https://uc-r.github.io/ggplot_intro">University of Cincinnati ggplot2 tutorial</a><p>
+<p><a href="https://www.tutorialspoint.com/ggplot2/index.htm">Tutorials Point ggplot2 tutorial</a><p>
