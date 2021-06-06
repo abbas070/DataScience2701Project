@@ -61,7 +61,12 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(kableExtra)
 library(dplyr)
-df <- read.csv("h1b.csv")
+library(readr)
+
+data1 <- read.csv("h1b_part1.csv")
+data2 <- read.csv("h1b_part2.csv")
+
+df <- left_join(data1, data2)
 head(df,10) %>%
  kable( "html", escape=F, align="c") %>%
  kable_styling(bootstrap_options = "striped", full_width = F, position = "center", fixed_thead = T)
