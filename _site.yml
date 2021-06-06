@@ -6,6 +6,8 @@ navbar:
       href: index.html
     - text: "Stage One"
       href: Step1.html
+    - text: "Stage Two"
+      href: ProjectStep2.html
     - text: "Links"
       href: Journal.html
 output_dir: "docs"
