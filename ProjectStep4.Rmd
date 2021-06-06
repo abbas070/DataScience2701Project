@@ -3,8 +3,8 @@ title: "Project Step 4"
 author: "Elmurad Abbasov"
 date: "Spring 2021"
 output: 
-  html_document:
-#    code_folding: hide
+  html_document
+
 ---
 
 <a href=#"final-project">Final project</a>
@@ -48,7 +48,9 @@ suppressWarnings({ library(knitr) })
 suppressWarnings({ library(kableExtra) })
 suppressWarnings({ library(dplyr) })
 
-df <- read.csv("h1bcopy.csv")
+data1 <- read.csv("h1b_part1.csv")
+data2 <- read.csv("h1b_part2.csv")
+df <- full_join(data1, data2)
 head(df,10) %>%
  kable( "html", escape=F, align="c") %>%
  kable_styling(bootstrap_options = "striped", full_width = T, position = "center", fixed_thead = T)
@@ -85,7 +87,7 @@ c(nrow(df),ncol(df))
 ```{r, warning=FALSE, message=FALSE}
 library(knitr)
 library(kableExtra)
-dfCount <- read.csv("AppCount.csv")
+dfCount <- read.csv("data/AppCount.csv")
 head(dfCount,10) %>%
  kable( "html", escape=F, align="c") %>%
  kable_styling(bootstrap_options = "striped", full_width = F, position = "center", fixed_thead = T)
@@ -94,7 +96,7 @@ head(dfCount,10) %>%
 ```{r, warning=FALSE, message=FALSE}
 library(knitr)
 library(kableExtra)
-dfCount <- read.csv("AvgWage.csv")
+dfCount <- read.csv("data/AvgWage.csv")
 head(dfCount,10) %>%
  kable( "html", escape=F, align="c") %>%
  kable_styling(bootstrap_options = "striped", full_width = F, position = "center", fixed_thead = T)
@@ -172,9 +174,9 @@ suppressWarnings({ library(geojsonio) })
 library(leaflet)
 library(sp)
 
-countApp <- read.csv("AppCount.csv", header = T)
+countApp <- read.csv("data/AppCount.csv", header = T)
 
-states = geojsonio::geojson_read("gz_2010_us_040_00_20m.json",what="sp")
+states = geojsonio::geojson_read("data/gz_2010_us_040_00_20m.json",what="sp")
 
 df_states = countApp$State
 
@@ -231,9 +233,9 @@ library(leaflet)
 library(sp)
 library(stringr)
 
-averageApp <- read.csv("AvgWage.csv", header = T)
+averageApp <- read.csv("data/AvgWage.csv", header = T)
 
-states1 = geojsonio::geojson_read("gz_2010_us_040_00_20m.json",what="sp")
+states1 = geojsonio::geojson_read("data/gz_2010_us_040_00_20m.json",what="sp")
 
 df_states = str_to_title(averageApp$State)
 
@@ -291,8 +293,6 @@ suppressWarnings({ library(tidyr) })
 suppressWarnings({ library(RColorBrewer)})
 suppressWarnings({ library(dplyr)})
 
-
-df <- read.csv("h1bcopy.csv")
 jobs_df = count(df, JOB_TITLE, sort = TRUE)
 wordcloud(words = jobs_df$JOB_TITLE, 
           freq = jobs_df$n, 
@@ -400,9 +400,9 @@ suppressWarnings({
 library(leaflet)
 library(sp)
 
-countApp <- read.csv("AppCount.csv", header = T)
+countApp <- read.csv("data/AppCount.csv", header = T)
 
-states = geojsonio::geojson_read("gz_2010_us_040_00_20m.json", what = "sp")
+states = geojsonio::geojson_read("data/gz_2010_us_040_00_20m.json", what = "sp")
 
 df_states = countApp$State
 
@@ -461,9 +461,9 @@ library(leaflet)
 library(sp)
 library(stringr)
 
-averageApp <- read.csv("AvgWage.csv", header = T)
+averageApp <- read.csv("data/AvgWage.csv", header = T)
 
-states1 = geojsonio::geojson_read("gz_2010_us_040_00_20m.json", what = "sp")
+states1 = geojsonio::geojson_read("data/gz_2010_us_040_00_20m.json", what = "sp")
 
 df_states = str_to_title(averageApp$State)
 
@@ -547,7 +547,6 @@ suppressWarnings({
 })
 
 
-df <- read.csv("h1bcopy.csv")
 jobs_df = count(df, JOB_TITLE, sort = TRUE)
 wordcloud(
    words = jobs_df$JOB_TITLE,
