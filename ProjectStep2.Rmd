@@ -56,6 +56,7 @@ library(data.table)
 data1 <- read.csv("h1b_part1.csv")
 data2 <- read.csv("h1b_part2.csv")
 df <- full_join(data1, data2)
+#comment
 
 head(df,10) %>%
  kable( "html", escape=F, align="c") %>%
