@@ -1,5 +1,5 @@
 ---
-title: "Stat 2701 Project Step 1"
+title: "[CSCI 2701]: Project Stage 1"
 author: "Elmurad Abbasov"
 date: "Spring 2021"
 output:
