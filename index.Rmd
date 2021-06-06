@@ -38,6 +38,6 @@ This is a template example for lab journaling. Students in Matt Crump's Human Co
 ### [Crump Lab: Human Cognition and Performance](https://crumplab.github.io)
 
 <a href = "https://crumplab.github.io">
-![](images/logo.png)
+![](img/DSLogo.jpg)
 </a>
 </div>
