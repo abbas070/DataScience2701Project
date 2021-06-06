@@ -1,10 +1,10 @@
 name: "MyLabJournal"
 navbar:
-  title: "MyLabJournal"
+  title: "CSCI 2701"
   left:
     - text: "Home"
       href: index.html
-    - text: "Journal"
+    - text: "Stage One"
       href: Step1.html
     - text: "Links"
       href: Journal.html
