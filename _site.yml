@@ -8,6 +8,6 @@ navbar:
       href: Step1.html
     - text: "Stage Two"
       href: ProjectStep2.html
-    - text: "Links"
-      href: Journal.html
+    - text: "Stage Three"
+      href: ProjectStep3.html
 output_dir: "docs"
