@@ -10,4 +10,6 @@ navbar:
       href: ProjectStep2.html
     - text: "Stage Three"
       href: ProjectStep3.html
+    - text: "Stage Four"
+      href: ProjectStep4.html
 output_dir: "docs"
