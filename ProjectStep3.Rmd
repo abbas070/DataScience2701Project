@@ -1,0 +1,252 @@
+---
+title: "Stat 2701 Project Step 3"
+author: "Elmurad Abbasov"
+date: "Spring 2021"
+output: html_document
+---
+
+<a href=#"stage-three">Stage Three</a>
+<ul>
+<li> <a href="#technique-used">Techniques used</a> </li>
+<li> <a href="#goals">Goals</a> </li>
+<li> <a href="#more">More about technologies used: Leaflet and Word Cloud</a> </li>
+<li> <a href="#data-manipulations-performed">Data manipulations performed</a> </li>
+<li> <a href="#technical-setup">Technical setup</a> </li>
+<li> <a href="#results">Results</a> </li>
+<li> <a href="#appendix">Appendix</a> </li>
+
+</ul>
+
+<div id="stage-three" class=section level2"> </div>
+<h2> Stage Three </h2>
+<div id="techniques-used" class="section level3">
+<h3>Techniques used</h3>
+
+<p>After some time thinking, I have decided to make a statistical report instead of Shiny App, because it fits with my goals for this project the best. In this project, I wanted to make a comprehensive statistical analysis of the job market specifically for H-1B visa workers, mainly because this subject is not that popular but often underestimated. For my illustrations, I have decided to use several techniques, such as <strong>#15 "Mashing Up Different Sources of Data,"</strong> or specifically a <strong>choropleth map</strong> using library(leaflet) package, and <strong>#13 "Analysis of Textual Data,"</strong> or specifically producing a few <strong>word clouds</strong>. In addition, I will be using several graphs in the final stage to support my findings. </p>
+
+<div id="more" class="section level3">
+<h3>More about technologies used: Leaflet and Word Cloud</h3>
+
+<p>There were <strong>two</strong> main technologies that were involved in #15 and #13 techniques, and those are a <strong>leaflet package</strong> that helped us to make a thematic <strong>choropleth map</strong>, and a <strong>wordcloud package</strong> with which we performed a nice <strong>word cloud</strong> 
+
+<p>Now, lets have a few words about the actual technical stack we are using - Leaflet and Word Cloud packages for data visualization.</P> 
+<p><strong>Leaflet</strong> is a JavaScript library made to illustrative graphical information on geographical maps, and with its help we have made our interactive map. With leaflet, I was able to easily display tiled map, which is actually hosted on a public server. It can import and recognize data from GeoJSON files, and create appropriate styles and layers. A variation that I have used in leaflet is called a choropleth, which is a thematic map in which pre-defined areas (usually regions/cities/states) are colored in proportion to a statistical variable. Overall, leaflet is a wonderful package with easy-to-understand tutorials. More information about Leaflet can be found on their <a href="https://leafletjs.com/">official website</a></p>
+<p><strong>Word Cloud</strong> is another package in R that allows us to visually illustrate out text mining work. We can use text mining techniques to highlight the most commonly used keywords in a paragraph of text, and <strong>wordcloud</strong> in a visual representation of our textual data. I found a lot of useful information information on Text Mining and Word Cloud <a href="https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a">on this TowardsDataScience</a> article.</p>
+</p>
+
+
+<div id="goals" class="section level3">
+<h3>Goals</h3>
+
+<p>For this project, one of my goals was to illustrate what is the most popular job occupation in years from 2015 and 2015, as well as cover what specific locations have the most applicants filing visa petitions (and thus offering more jobs) and what part of the country has the highest average pay per year.</p>
+
+<div id="data-manipulations-performed" class="section level3">
+<h3>Data manipulations performed</h3>
+
+<p>As mentioned in previous project stages, the author decided to merge state names and city names into one column. Because if this, I wasn't able to load data directly to the map, but had to perform a few manipulations:</p>
+<p>First, I had to create an entire new column called <strong>States</strong>, where I would extract states from WORKCITE column and independently place in another column, keeping in the same order. Due to the size of data, I decided to perform this manipulation in Excel and created an entire new sub-table called "AppCount." I have then used a COUNTIF function to count the overlapping states and thus found how many times each state repeats. I have then transformed this numeric values into another column called <strong>ApplicationCount</strong> and imported a new dataset - with States and ApplicationCount columns - into R, using Upload button. Since the table was already in .csv format, it didn't cause any issues.</p>
+<P>And as for the Word Cloud, there were no issues along the way.</p>
+
+```{r, warning=FALSE, message=FALSE}
+library(knitr)
+library(kableExtra)
+dfCount <- read.csv("data/AppCount.csv")
+head(dfCount,10) %>%
+ kable( "html", escape=F, align="c") %>%
+ kable_styling(bootstrap_options = "striped", full_width = F, position = "center", fixed_thead = T)
+```
+
+<div id="technical-setup" class="section level3">
+<h3>Technical setup</h3>
+
+<p>For <strong>leaflet - choropleth</strong>, I have used a GeoJSON file to load the United States geographical data and to shape the United States using "polygons" geometry type. I have then loaded my AppCount.csv file attaching it to countApp dataframe, together with a .json file attaching it to "states." Then, I have sorted States and ApplicationCountfrom the countApp dataframe and merged .json information with my States. Once we are done with the fundamentals of importing and connecting dependencies, we can move to another part of the code that is responsible for setting up the view of the map, such as to initialize the exact coordinates for the starter view, adjust color, etc. The last part of the code is responsible for labeling the map, and in our case, it is total job applications per state. Please refer to appendix for code base. <p>For <strong>Word Cloud</strong> the setup was simple enough to cover in a few sentences - the goal was to find the most repetetive job title among all applicants, so I have imported the dataset into a dataframe called df, filtered for JOB_TITLE, set the frequency, and adjusted word cloud visual size.</p></p>
+
+
+
+<div id="results" class="section level3">
+<h3>Results</h3>
+
+<p>As a result, for <strong>choropleth - leaflet map</strong>, we can now hover over the states and see the total number of applications filled in that specific state, for both 2015 and 2016. As it was expected, the most applications are filled in California (184,932) being the highest, then Texas (104,442), and then New York (86985). To summarize, if California had 184,932 applicants in total for those two years, it means that California offers the most jobs across the country, at least for H-1B workers.</p>
+
+```{r, warning=F, message=F, echo=F, fig.width=10}
+suppressWarnings({ library(geojsonio) })
+
+library(leaflet)
+library(sp)
+
+countApp <- read.csv("data/AppCount.csv", header = T)
+
+states = geojsonio::geojson_read("data/gz_2010_us_040_00_20m.json",what="sp")
+
+df_states = countApp$State
+
+count = countApp$ApplicationCount
+
+names(count) = df_states
+
+USS = states[states$NAME %in% df_states,]
+
+USS$Count = count[USS$NAME]
+
+map=leaflet(USS)
+bins = c(0, 500, 1000, 5000, 10000, 50000, 100000, 200000)
+pal=colorBin("YlOrRd",domain=USS$Count, bins = bins)
+
+map%>%setView(-96, 37.8, 4)%>%addPolygons(
+   color="white",
+   weight=2,
+   opacity=1,
+   dashArray="3",
+   fillOpacity=0.7,
+   fillColor=~pal(Count),
+   highlight=highlightOptions(
+     weight=5,
+     color="#666",
+     dashArray="",
+     fillOpacity= 0.7,
+     bringToFront=TRUE
+   ),
+   # From R leaflet tutorial
+   label=sprintf(
+      "<strong>%s</strong><br/>%g total job applications per state</sup>",
+      USS$NAME,
+      USS$Count
+   ) %>% lapply(htmltools::HTML),
+   labelOptions=labelOptions(
+     style=list("font-weight" = "normal", 
+                padding="3px 8px"),
+     textsize="15px",
+     direction="auto"
+   ),
+) %>% addLegend(pal = pal, values = ~Count, opacity = 0.7, title = NULL,
+  position = "bottomleft")
+```
+
+<p>For the <strong>Word Cloud</strong> we see that the most repeating job title in 2015-2016 years is <strong>Programmer Analyst</strong>, followed by Software Engineer, Computer Programmer, Software Developer, Computer Systems Analyst, and more.</p>
+
+```{r,fig.align="center", fig.width = 10, fig.height=10, warning=FALSE, message=FALSE, echo=FALSE}
+suppressWarnings({ library(tm) })
+suppressWarnings({ library(wordcloud) })
+suppressWarnings({ library(tidyr) })
+suppressWarnings({ library(RColorBrewer)})
+suppressWarnings({ library(dplyr)})
+suppressWarnings({ library(readr)})
+
+data1 <- read.csv("h1b_part1.csv")
+data2 <- read.csv("h1b_part2.csv")
+df <- left_join(data1, data2)
+
+jobs_df = count(df, JOB_TITLE, sort = TRUE)
+wordcloud(words = jobs_df$JOB_TITLE, 
+          freq = jobs_df$n, 
+          min.freq = 100,
+          max.words=300, 
+          random.order=FALSE, 
+          rot.per=0.25, 
+          colors=brewer.pal(8, "Dark2")) 
+```
+
+<div id="appendix" class="section level3">
+<h3>Appendix</h3>
+
+<p><strong>Code Base for Choropleth Map: </strong></P>
+
+```{r, warning=F, message=F, eval=F}
+suppressWarnings({
+  library(geojsonio)
+})
+
+library(leaflet)
+library(sp)
+
+countApp <- read.csv("data/AppCount.csv", header = T)
+
+states = geojsonio::geojson_read("data/gz_2010_us_040_00_20m.json", what = "sp")
+
+df_states = countApp$State
+
+count = countApp$ApplicationCount
+
+names(count) = df_states
+
+USS = states[states$NAME %in% df_states, ]
+
+USS$Count = count[USS$NAME]
+
+map = leaflet(USS)
+bins = c(0, 500, 1000, 5000, 10000, 50000, 100000, 200000)
+pal = colorBin("YlOrRd", domain = USS$Count, bins = bins)
+
+map %>% setView(-96, 37.8, 4) %>% addPolygons(
+  color = "white",
+  weight = 2,
+  opacity = 1,
+  dashArray = "3",
+  fillOpacity = 0.7,
+  fillColor =  ~ pal(Count),
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.7,
+    bringToFront = TRUE
+  ),
+  # From R leaflet tutorial
+  label = sprintf(
+    "<strong>%s</strong><br/>%g total job applications per state</sup>",
+    USS$NAME,
+    USS$Count
+  ) %>% lapply(htmltools::HTML),
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal",
+                 padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"
+  ),
+) %>% addLegend(
+  pal = pal,
+  values = ~ Count,
+  opacity = 0.7,
+  title = NULL,
+  position = "bottomleft"
+)
+```
+
+<p><strong>Code Base for Word Cloud: </strong></P>
+
+```{r,warning=F, message=F, eval=F}
+suppressWarnings({
+  library(tm)
+})
+suppressWarnings({
+  library(wordcloud)
+})
+suppressWarnings({
+  library(tidyr)
+})
+suppressWarnings({
+  library(RColorBrewer)
+})
+suppressWarnings({
+  library(dplyr)
+})
+
+
+df <- read.csv("h1bcopy.csv")
+job_title_df = count(df, JOB_TITLE, sort = TRUE)
+wordcloud(
+  words = job_title_df$JOB_TITLE,
+  freq = job_title_df$n,
+  min.freq = 100,
+  max.words = 300,
+  random.order = FALSE,
+  rot.per = 0.25,
+  colors = brewer.pal(8, "Dark2")
+) 
+```
+
+<p><strong>Additional Resources: </strong> 
+<p><a href="http://seq.morris.umn.edu:3838/ds2701/Maps/#section-the-package-leaflet">Peter Dolan's Choropleths Tutorial</a></p>
+<p><a href="https://rstudio.github.io/leaflet/choropleths.html">Official Leaflet Choropleths Tutorial</a></p>
+<p><a href="https://www.youtube.com/watch?v=RrtqBYLf404"> A YouTube Tutorial By "dataslice"</a></p></p>
+
