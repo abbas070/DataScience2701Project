@@ -134,7 +134,7 @@ suppressWarnings({ library(readr)})
 
 data1 <- read.csv("h1b_part1.csv")
 data2 <- read.csv("h1b_part2.csv")
-df <- left_join(data1, data2)
+df <- full_join(data1, data2)
 
 jobs_df = count(df, JOB_TITLE, sort = TRUE)
 wordcloud(words = jobs_df$JOB_TITLE, 
