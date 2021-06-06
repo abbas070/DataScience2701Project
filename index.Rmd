@@ -17,27 +17,29 @@ output: html_document
 <div class="row" style="padding-top: 30px;">
 <div class="col-sm-6">
 
-# **My Lab Journal**
+# **Project: H-1B job market analysis**
 
-This is a template example for lab journaling. Students in Matt Crump's Human Cognition and Performance Lab will use this template to learn R, and other things. Students can replace this text with more fun things. People not in my lab can use this too.
+For this project, I will perform a comprehensive analysis of H-1B visa job market using a massive dataset from the Office of Foreign Labor Certification (OFLC). In this analysis, I will be looking specifically for H1-B employees in the United States, and as a result will conclude on which part of the United States offers the most jobs for H-1B qualified specialists, and whether there was an increase or decrease of such job offering through 2015-2016.  In addition, I will look at specific job titles and their correlation with several regions using a leaflet package in R.
 
-## How to use
+## How to use:
 
-1. fork the repo for this website and follow instructions on read me to get set up. [https://github.com/CrumpLab/LabJournalWebsite](https://github.com/CrumpLab/LabJournalWebsite)
+The project consists of four major parts, which are divided into different stages. Please navigate through Stage One to Stage Four.
 
-2. Blog/journal what you are doing in R, by editing the Journal.Rmd. See the [Journal page](https://crumplab.github.io/LabJournalWebsite/Journal.html) for an example of what to do to get started learning R.
+1. `Stage One` answers questions such as the purpose of the project, general information about the data, structure of the data, and instructions on how to access and use the data in accordance with reproducible research principles.  
 
-3. See the [links page](https://crumplab.github.io/LabJournalWebsite/Links.html) for lots of helpful links on learning R.
+2. `Stage Two` serves as a more in-depth data exploration, including data description, initial observations, sanity checks, and a discussion on next steps in the analysis.
 
-4. Change everything to make it your own.
+3. `Stage Three` is a preliminary stage before the last one with sample techniques. In this sage, I discussed what advanced techniques are going to be used in the analysis, such as sampling distributions, analysis of textual data, and mashing up different sources of data.
+
+4. `Stage Four` is the final statistical report of the analysis that includes data information and description, as well as implemented techniques such as geographical data using leaflet package and data mining techniques.
 
 
 </div>
 <div class="col-sm-6">
 
-### [Crump Lab: Human Cognition and Performance](https://crumplab.github.io)
+### [Data Science 2701: Final Academic Project](https://github.com/abbas070/DataScience2701Project)
 
-<a href = "https://crumplab.github.io">
+<a href = "https://github.com/abbas070/DataScience2701Project">
 ![](img/DSLogo.jpg)
 </a>
 </div>
