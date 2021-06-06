@@ -1,5 +1,5 @@
 ---
-title: "[CSCI 2701]: Project Stage 3"
+title: "[CSCI 2701]: Project Step 3"
 author: "Elmurad Abbasov"
 date: "Spring 2021"
 output: html_document
