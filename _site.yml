@@ -13,3 +13,4 @@ navbar:
     - text: "Stage Four"
       href: ProjectStep4.html
 output_dir: "docs"
+
