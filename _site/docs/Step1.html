@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Elmurad Abbasov" />
+
+
+<title>[CSCI 2701]: Project Step 1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">CSCI 2701</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Step1.html">Stage One</a>
+</li>
+<li>
+  <a href="ProjectStep2.html">Stage Two</a>
+</li>
+<li>
+  <a href="ProjectStep3.html">Stage Three</a>
+</li>
+<li>
+  <a href="ProjectStep4.html">Stage Four</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">[CSCI 2701]: Project Step 1</h1>
+<h4 class="author">Elmurad Abbasov</h4>
+<h4 class="date">Spring 2021</h4>
+
+</div>
+
+
+<a href=#"stage-one">Stage One</a>
+<ul>
+<li>
+<a href="#purpose">Purpose of the project</a>
+</li>
+<li>
+<a href="#data">Data</a>
+</li>
+<li>
+<a href="#structure-of-the-data">Structure of the data</a>
+</li>
+<li>
+<a href="#obtaining-the-data">Obtaining the data</a>
+</li>
+<li>
+<a href="#appendix">Appendix</a>
+</li>
+</ul>
+<div id="stage-one" class=section level2">
+<h2> Stage One </h2>
+<div id="purpose" class="section level3">
+<h3>Purpose</h3>
+<p> 1. <strong>What do you plan to do?</strong> - For this project, I will perform a comprehensive analysis of H-1B visa job market using a massive dataset from the Office of Foreign Labor Certification (OFLC). In this analysis, I will be looking specifically for H1B employees in the United States, and as a result will conclude on which part of the United States offers the most jobs for H-1B qualified specialists, and whether there was an increase or decrease of such job offering through 2015-2016. </p> 
+
+<p> 2. <strong>What do you hope to understand or describe?</strong> - For the presentation part, I am planning on making either an interactive Shiny application in which I would implement a leaflet map and a few features that would change data presented on the map, or a statistical report in which I would make a thorough statistical analysis and confirmed hypothesis of the H-1B visa job market using several statistical reasonings. </p>
+
+<p> 3. <strong>Why are you interested in this topic?</strong> - I am interested in this project because I am an international student myself, and as someone who would be seeking employment opportunities in Computer and Data Science industry, it would be interesting to know the data and understand what are the trends and what to expect. I hope that this analysis will be helpful to other students. I also believe that the majority of information presented at the end of the project will be suitable for any other people interested in the description of the job market, regardless of work authorization status, because the trends are often common and general across all people.</p>
+</div> 
+
+<div id="data" class="section level3">
+<h3>Data</h3>
+<p> 1. <strong>What is the data?</strong> This data is a collection of H-1B work visa petition data, with approximately 3 million records overall in the period from 2011 to 2016. The columns in the initial dataset include case status, employer name, worksite location, worksite coordinates, job titles, prevailing wage, occupation code, and year filled.</p>
+<p> 2. <strong>How was it collected?</strong> The Office of Foreign Labor Certification (OFLC) generates disclosure data about the immigration programs including the H1-B visa, but the raw dataset was then transformed into a more suitable for analysis form by Sharan Naribole. I will include an example of the modified Kaggle data later in this document, but for now, please see an illustration on where to find a raw dataset for your convenience. <img src="img/rawdata.png" alt="Raw_Data"></p>
+<p> 3. <strong>Who collected it?</strong> The raw dataset was provided by the Office of Foreign Labor Certification (OFLC), which can be found online <a href="https://www.dol.gov/agencies/eta/foreign-labor/performance">here</a> </p>
+<p> 4. <strong>Any other details necessary to properly understand the data for the purposes of your project?</strong> For the background information, the H-1B visa is a non-immigrant visa category for temporary foreign workers in the United States that is dependent on jobs. A US employer must offer a position and file an H-1B visa petition with the US immigration department in order for a foreign national to apply for the visa. After completing college/ higher education (Masters, PhD) and working full-time, this is the most common visa status applied for and retained by international students. <p>Also, later in this project I will be analyzing employers that offer the most H-1B qualified jobs from EMPLOYER_NAME columns. It is important to note that not all of the employers(companies) were based in the United States. Many of them have headquarters around the world, but all of them have an office/subsidiary/branch of their company in the US.  </p> </p> 
+
+<div id="structure-of-the-data" class="section level3">
+<h3>Structure of the data</h3>
+<p> 1. <strong>What are the variables called?</strong> There are 10 columns in the dataset: case_status, employer_name, soc_name, job_title, full_time_position, prevailing_wage, year, worksite, lon(longutude of workcite), lat(latitute of workcite) </p>
+<p> 2. <strong>What do they mean?</strong>
+<p><strong>X1:</strong> which is the just the count of the rows;</p> 
+<P><strong>CASE_STATUS:</strong> Status associated with the last significant event or decision, Valid values include “Certified,” “Certified-Withdrawn,” Denied,” and “Withdrawn”;</P>
+<p><strong>EMPLOYER_NAME:</strong> Name of employer submitting the H1-B application, used in comparing salaries and number of applications of various employers;</P>
+<p><strong>JOB_TITLE:</strong> Title of the job using which we can filter specific job positions for e.g., Data Scientist, Data Engineer etc;</P>
+<p><strong>SOC_NAME:</strong> The occupation code for the employment;</P>
+<p><strong>FULL_TIME_POSITION:</strong> Whether the application is for a full-time position of for a part-time position;</p>
+<p><strong>PREVAILING_WAGE:</strong> The prevailing wage for a job position is defined as the average wage paid to similarly employed workers in the requested occupation in the area of intended employment; 
+<P><strong>YEAR:</strong> The application year;</P>
+<p><strong>WORKSITE_CITY/WORKSITE_STATE:</strong> The foreign worker’s intended area of employment;</p>
+<p><strong>lon:</strong> Longitude of the employer worksite;</p>
+<p><strong>lat:</strong> Latitude of the employer worksite</p>
+</p>
+
+
+<div style="overflow-x: scroll;">
+
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> X </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> CASE_STATUS </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> EMPLOYER_NAME </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> SOC_NAME </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> JOB_TITLE </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> FULL_TIME_POSITION </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> PREVAILING_WAGE </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> YEAR </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> WORKSITE </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> lon </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> lat </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> 1 </td>
+   <td style="text-align:center;"> CERTIFIED-WITHDRAWN </td>
+   <td style="text-align:center;"> UNIVERSITY OF MICHIGAN </td>
+   <td style="text-align:center;"> BIOCHEMISTS AND BIOPHYSICISTS </td>
+   <td style="text-align:center;"> POSTDOCTORAL RESEARCH FELLOW </td>
+   <td style="text-align:center;"> N </td>
+   <td style="text-align:center;"> 36067.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> ANN ARBOR, MICHIGAN </td>
+   <td style="text-align:center;"> -83.74304 </td>
+   <td style="text-align:center;"> 42.28083 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 2 </td>
+   <td style="text-align:center;"> CERTIFIED-WITHDRAWN </td>
+   <td style="text-align:center;"> GOODMAN NETWORKS, INC. </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> CHIEF OPERATING OFFICER </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 242674.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> PLANO, TEXAS </td>
+   <td style="text-align:center;"> -96.69889 </td>
+   <td style="text-align:center;"> 33.01984 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 3 </td>
+   <td style="text-align:center;"> CERTIFIED-WITHDRAWN </td>
+   <td style="text-align:center;"> PORTS AMERICA GROUP, INC. </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> CHIEF PROCESS OFFICER </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 193066.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> JERSEY CITY, NEW JERSEY </td>
+   <td style="text-align:center;"> -74.07764 </td>
+   <td style="text-align:center;"> 40.72816 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 4 </td>
+   <td style="text-align:center;"> CERTIFIED-WITHDRAWN </td>
+   <td style="text-align:center;"> GATES CORPORATION, A WHOLLY-OWNED SUBSIDIARY OF TOMKINS PLC </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> REGIONAL PRESIDEN, AMERICAS </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 220314.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> DENVER, COLORADO </td>
+   <td style="text-align:center;"> -104.99025 </td>
+   <td style="text-align:center;"> 39.73924 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 5 </td>
+   <td style="text-align:center;"> WITHDRAWN </td>
+   <td style="text-align:center;"> PEABODY INVESTMENTS CORP. </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> PRESIDENT MONGOLIA AND INDIA </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 157518.4 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> ST. LOUIS, MISSOURI </td>
+   <td style="text-align:center;"> -90.19940 </td>
+   <td style="text-align:center;"> 38.62700 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 6 </td>
+   <td style="text-align:center;"> CERTIFIED-WITHDRAWN </td>
+   <td style="text-align:center;"> BURGER KING CORPORATION </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> EXECUTIVE V P, GLOBAL DEVELOPMENT AND PRESIDENT, LATIN AMERI </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 225000.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> MIAMI, FLORIDA </td>
+   <td style="text-align:center;"> -80.19179 </td>
+   <td style="text-align:center;"> 25.76168 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 7 </td>
+   <td style="text-align:center;"> CERTIFIED-WITHDRAWN </td>
+   <td style="text-align:center;"> BT AND MK ENERGY AND COMMODITIES </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> CHIEF OPERATING OFFICER </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 91021.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> HOUSTON, TEXAS </td>
+   <td style="text-align:center;"> -95.36980 </td>
+   <td style="text-align:center;"> 29.76043 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 8 </td>
+   <td style="text-align:center;"> CERTIFIED-WITHDRAWN </td>
+   <td style="text-align:center;"> GLOBO MOBILE TECHNOLOGIES, INC. </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> CHIEF OPERATIONS OFFICER </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 150000.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> SAN JOSE, CALIFORNIA </td>
+   <td style="text-align:center;"> -121.88633 </td>
+   <td style="text-align:center;"> 37.33821 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 9 </td>
+   <td style="text-align:center;"> CERTIFIED-WITHDRAWN </td>
+   <td style="text-align:center;"> ESI COMPANIES INC. </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> PRESIDENT </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 127546.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> MEMPHIS, TEXAS </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> 10 </td>
+   <td style="text-align:center;"> WITHDRAWN </td>
+   <td style="text-align:center;"> LESSARD INTERNATIONAL LLC </td>
+   <td style="text-align:center;"> CHIEF EXECUTIVES </td>
+   <td style="text-align:center;"> PRESIDENT </td>
+   <td style="text-align:center;"> Y </td>
+   <td style="text-align:center;"> 154648.0 </td>
+   <td style="text-align:center;"> 2016 </td>
+   <td style="text-align:center;"> VIENNA, VIRGINIA </td>
+   <td style="text-align:center;"> -77.26526 </td>
+   <td style="text-align:center;"> 38.90122 </td>
+  </tr>
+</tbody>
+</table>
+</div>
+<p> 3. <strong>What are the types of the variables?</strong> For most of the columns, including CASE_STATUS, EMPLOYER_NAME, JOB_TITLE, SOC_NAME, FULL_TIME_POSITION, WORKSITE_CITY/STATE, variables are in a form of characters or strings, but columns such as PREVAILING_WAGE, lon, and lat are numeric, with YEAR being integer.</p>
+
+<div style="overflow-x: scroll;">
+
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">   </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">       X </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> CASE_STATUS </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> EMPLOYER_NAME </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">   SOC_NAME </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">  JOB_TITLE </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> FULL_TIME_POSITION </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;"> PREVAILING_WAGE </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">      YEAR </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">   WORKSITE </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">      lon </th>
+   <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">      lat </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> Min.   :     1 </td>
+   <td style="text-align:center;"> Length:486758 </td>
+   <td style="text-align:center;"> Length:486758 </td>
+   <td style="text-align:center;"> Length:486758 </td>
+   <td style="text-align:center;"> Length:486758 </td>
+   <td style="text-align:center;"> Length:486758 </td>
+   <td style="text-align:center;"> Min.   :        0 </td>
+   <td style="text-align:center;"> Min.   :2016 </td>
+   <td style="text-align:center;"> Length:486758 </td>
+   <td style="text-align:center;"> Min.   :-157.86 </td>
+   <td style="text-align:center;"> Min.   :13.44 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1st Qu.:121690 </td>
+   <td style="text-align:center;"> Class :character </td>
+   <td style="text-align:center;"> Class :character </td>
+   <td style="text-align:center;"> Class :character </td>
+   <td style="text-align:center;"> Class :character </td>
+   <td style="text-align:center;"> Class :character </td>
+   <td style="text-align:center;"> 1st Qu.:    59010 </td>
+   <td style="text-align:center;"> 1st Qu.:2016 </td>
+   <td style="text-align:center;"> Class :character </td>
+   <td style="text-align:center;"> 1st Qu.:-111.93 </td>
+   <td style="text-align:center;"> 1st Qu.:34.15 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> Median :243380 </td>
+   <td style="text-align:center;"> Mode  :character </td>
+   <td style="text-align:center;"> Mode  :character </td>
+   <td style="text-align:center;"> Mode  :character </td>
+   <td style="text-align:center;"> Mode  :character </td>
+   <td style="text-align:center;"> Mode  :character </td>
+   <td style="text-align:center;"> Median :    69035 </td>
+   <td style="text-align:center;"> Median :2016 </td>
+   <td style="text-align:center;"> Mode  :character </td>
+   <td style="text-align:center;"> Median : -86.78 </td>
+   <td style="text-align:center;"> Median :38.99 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> Mean   :243380 </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> Mean   :    89507 </td>
+   <td style="text-align:center;"> Mean   :2016 </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> Mean   : -92.42 </td>
+   <td style="text-align:center;"> Mean   :38.17 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 3rd Qu.:365069 </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> 3rd Qu.:    85634 </td>
+   <td style="text-align:center;"> 3rd Qu.:2016 </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> 3rd Qu.: -75.63 </td>
+   <td style="text-align:center;"> 3rd Qu.:40.81 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> Max.   :486758 </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> Max.   :329139200 </td>
+   <td style="text-align:center;"> Max.   :2016 </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> Max.   : 145.73 </td>
+   <td style="text-align:center;"> Max.   :64.84 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA's   :1 </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA's   :8284 </td>
+   <td style="text-align:center;"> NA's   :8284 </td>
+  </tr>
+</tbody>
+</table>
+</div>
+
+<p> 4. <strong>Are any NA's present?</strong> Yes, there are occasional NAs present in some rows for some columns, but they can be excluded. More information about NAs will be covered in Stage 2.</p>
+<p> 5. <strong>Are there any coding issues?</strong> There are no coding issues– all categorical levels correspond to what one would expect from their value.</p>
+<p> 6. <strong>How much data is there?</strong> Initial dataframe from Kaggle has 11 columns and 3002458 observations. I am planning on trimming it, however, and keeping only 2015 and 2016 years, which would keep it within 1 million observations.</p>
+
+<div id="obtaining-the-data" class="section level3">
+<h3>Obtaining the data</h3>
+<p> 1. <strong>Where did you get the data? </strong> I have downloaded this dataset from Kaggle.com. An author of the dataset, Sharan Naribole, did some data wrangling to bring it to an appropriate for analysis form, because the original raw data was not that suitable. Please see an image below for an illustration on how to navigate on Kaggle. The source of the dataset can be found <a href="https://www.kaggle.com/nsharan/h-1b-visa">here</a>. <img src="img/datafromkaggle.png" alt="Italian Trulli"> </p>
+<p> 2. <strong>Show how the data was imported into R</strong> The dataset was first downloaded from Kaggle. I then created a new folder in RStudio home directory, set a work directory to there, and used an "upload" button build in RStudio to transfer the dataset from my machine into local environment. To import the dataset, I used read.csv function built in R, such as df <- read.csv("h1b.csv"). </p>
+<p> 3. <strong>What steps were necessary to get the data into the appropriate form? </strong>  For us to use any dataset, it is recommended to covert it to dataframe first. It can be done assigning our dataset to a variable of any name, which in my case was df <- read.csv("h1b.csv") </p>
+<p> 4. <strong>What possible pitfalls exist?</strong> A major pitfall that the dataset is extremely large and RStudio gets overwhelmed when proceeding that much data. Another pitfall was that the author joined states and cities together in one column, which leaflet doesn't always accept. Because of this, I can to perform several manipulations in excel to create new columns and a few new datasets which included independent state names. Also, there are NAs present in several columns, mostly in lon and lat columns. I will trim the dataset later, but other than that I don't see any pitfalls. </p>
+<p> 5. <strong>What data was initially trimmed (more may be removed later)?</strong> An author mentions that several data wrangling techniques were performed, such as merging or separating columns. I went ahead I checked the original, raw dataset from U.S Department of Labor (perfomance data section) and compared the dataset from Kaggle and from raw data. I found out that many columns were trimmed, so yes, Kaggle dataset was trimmed. Original raw data can be found <a href="https://www.dol.gov/agencies/eta/foreign-labor/performance">here</a> <strong>under LCA Programs (H-1B, H-1B1, E-3) section.</strong> I could have trimmed case_status column because most of the applicants are CERTIFIED, and this column doesn't have any practical usage for my work; however, I would love to make an extra analysis based on this column as well in future steps. In addition, I may be removing years from 2011 to 2014 because this information might not be relevant or actual to this day, and also to keep a dataset shorter (in this case, it is only about 1 million observations). I will keep the most relevant years available from the dataset (2015-2016).</p>
+<p> 6. <strong>Any transformations? If so what (show details) and why.</strong> I am not planning on making any major transformations on a dataset from Kaggle. The author did some transformations, a few of which were removing CASE_SUBMITTED, VISA_CLASS, EMPLOYMENT_START_DATE, EMPLOYMENT_END_DATE, EMPLOYER_ADDRESS, EMPLOYER_POSTAL_CODE, EMPLOYER_COUNTRY, EMPLOYER_PROVINCE, EMPLOYER_PHONE, EMPLOYER_PHONE_EXT, AGENT_ATTORNEY_NAME, AGENT_ATTORNEY_CITY, SOC_CODE, NAID_CODE, TOTAL_WORKERS, PW_WAGE_SOURCE, PW_SOURCE_YEAR, PW_SOURCE_OTHER,WAGE_RATE_OF_PAY_FROM, WAGE_RATE_OF_PAY_TO, WAGE_UNIT_OF_PAY, H-1B_DEPENDENT, WILLFUL_VIOLATOR, WORKSITE_POSTAL_CODE, and ORIGINAL_CERT_DATE columns, and kept only essential to our analysis information. <p>In addition, the author mentioned that for WAGE column in the data set, there were two salary measurments - <strong> hourly based, and annually based.</strong> In summary, 92% of records provided WAGE at the Year scale, where only 7.73% provided the information at Hourly scale, and there were also 0.02% of mission information. The author removed missing information and converted hourly scale to year scale.</p> <p>Furthermore, the author added two completely new columns to the dataset - lat (latitude) and lon (longitude) columns. Since they were not provided in the raw dataset from Office of Foreign Labor Certification (OFLC). To do that, the author used ggmap package. Geocodes have been found for 96.47% of the records in our dataset inspite of not finding the geocodes for every unique Worksite value. </p>   <p>Lastly, the author merged Worksite City and Worsite States from the raw dataset into one column.</p></p>
+<p> 7. <strong>Anything else necessary to properly understand the import process.</strong> An import process is straightforward. One warning I would give is that Kaggle requires an account in order to interact with their website, including when trying to download a dataset, so one might want to consider making an account there. If this is an issue, please let me know at abbas070@umn.edu and I will be happy to provide the same dataset. I will also attach it on Canvas as an additional document.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="appendix" class="section level3">
+<h3>
+Appendix
+</h3>
+<p>
+<strong>Additional dataset structure variation</strong>
+</p>
+</div>
+<pre class="r"><code>glimpse(df)</code></pre>
+<pre><code>## Rows: 486,758
+## Columns: 11
+## $ X                  &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, …
+## $ CASE_STATUS        &lt;chr&gt; &quot;CERTIFIED-WITHDRAWN&quot;, &quot;CERTIFIED-WITHDRAWN&quot;, &quot;CERT…
+## $ EMPLOYER_NAME      &lt;chr&gt; &quot;UNIVERSITY OF MICHIGAN&quot;, &quot;GOODMAN NETWORKS, INC.&quot;,…
+## $ SOC_NAME           &lt;chr&gt; &quot;BIOCHEMISTS AND BIOPHYSICISTS&quot;, &quot;CHIEF EXECUTIVES&quot;…
+## $ JOB_TITLE          &lt;chr&gt; &quot;POSTDOCTORAL RESEARCH FELLOW&quot;, &quot;CHIEF OPERATING OF…
+## $ FULL_TIME_POSITION &lt;chr&gt; &quot;N&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;…
+## $ PREVAILING_WAGE    &lt;dbl&gt; 36067.0, 242674.0, 193066.0, 220314.0, 157518.4, 22…
+## $ YEAR               &lt;int&gt; 2016, 2016, 2016, 2016, 2016, 2016, 2016, 2016, 201…
+## $ WORKSITE           &lt;chr&gt; &quot;ANN ARBOR, MICHIGAN&quot;, &quot;PLANO, TEXAS&quot;, &quot;JERSEY CITY…
+## $ lon                &lt;dbl&gt; -83.74304, -96.69889, -74.07764, -104.99025, -90.19…
+## $ lat                &lt;dbl&gt; 42.28083, 33.01984, 40.72816, 39.73924, 38.62700, 2…</code></pre>
+<p>
+<strong>H-1B General Information</strong>
+</p>
+<p>
+“The H-1B program allows companies and other employers in the United States to temporarily employ foreign workers in occupations that require the theoretical and practical application of a body of highly specialized knowledge and a bachelor’s degree or higher in the specific specialty, or its equivalent. H-1B specialty occupations may include fields such as architecture, engineering, mathematics, physical sciences, social sciences, medicine and health, education, business specialties, accounting, law, theology, and the arts.” - <a href="https://www.uscis.gov/working-in-the-united-states/temporary-workers/h-1b-specialty-occupations-and-fashion-models/h-1b-cap-season">USCIS</a>
+</p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
