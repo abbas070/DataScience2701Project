@@ -1,6 +1,8 @@
 ---
 title: "MyLabJournal"
-output: html_document
+output:
+  rmarkdown::html_document:
+    theme: cosmo
 ---
 
 <style type="text/css">
